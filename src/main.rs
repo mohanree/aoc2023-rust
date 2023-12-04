@@ -72,6 +72,38 @@ mod tests {
     }
 }
 
+mod day4 {
+    use std::fs::File;
+    use std::io::Read;    
+
+    fn process_input_lines( haystack: &str ) -> i32 {
+        haystack
+            .lines()
+            .map(|line| process_input_line(line))
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+
+    fn process_input_line( haystack: &str ) -> i32 {
+
+        0
+    }
+
+    pub fn puzzle1() {
+        let mut contents = String::new();
+    
+        match File::open("data/p2_input.txt") {
+            Ok(mut file) => {
+                match file.read_to_string(&mut contents) {
+                    Ok(_) => println!("Puzzle # 1.1: {}", process_input_lines(contents)),
+                    Err(e) => println!("Error reading file: {}", e),
+                }
+            },
+            Err(e) => println!("Error opening file: {}", e),
+        }
+    }
+
+}
 mod day1 {
     use std::collections::HashMap;
     use std::fs::File;
