@@ -12,6 +12,7 @@ mod day1 {
             .join("\n")
     }
 
+
     fn replace_first_and_last_matches(haystack: &str) -> String {
         let needles: HashMap<&str, &str> = [
             ("one", "1"), ("two", "2"), ("three", "3"),
@@ -22,6 +23,7 @@ mod day1 {
         let mut first_match: Option<(usize, &str, usize)> = None;
         let mut last_match: Option<(usize, &str, usize)> = None;
 
+        println!("haystack {}", haystack);
         for (needle, replacement) in &needles {
             if let Some(index) = haystack.find(needle) {
                 if first_match.is_none() || index < first_match.unwrap().0 {
@@ -44,7 +46,7 @@ mod day1 {
                 result.replace_range(index..index + len, replacement);
             }
         }
-
+        println!("Result {}", result);
         result
     }
 
