@@ -72,7 +72,8 @@ mod tests {
     }
 }
 
-mod day4 {
+mod day4_1 {
+    use std::collections::HashSet;
     use std::fs::File;
     use std::io::Read;    
 
@@ -80,22 +81,31 @@ mod day4 {
         haystack
             .lines()
             .map(|line| process_input_line(line))
-            .collect::<Vec<_>>()
-            .join("\n")
+            .sum()
     }
 
     fn process_input_line( haystack: &str ) -> i32 {
 
-        0
+        let parts: Vec<&str> = haystack[haystack.find(":").unwrap()..].split('|').collect();
+        let my_nums : HashSet<i32> = parts[1].split_whitespace().filter_map(|s| s.parse().ok()).collect();
+        let win_nums : HashSet<i32> = parts[0].split_whitespace().filter_map(|s| s.parse().ok()).collect();
+        let i : HashSet<_> = my_nums.intersection(&win_nums).cloned().collect();
+
+        if i.len() > 0 {
+            1 << (i.len()-1)    
+        }
+        else {
+            0
+        }
     }
 
-    pub fn puzzle1() {
+    pub fn point_value() {
         let mut contents = String::new();
     
-        match File::open("data/p2_input.txt") {
+        match File::open("data/d4_input.txt") {
             Ok(mut file) => {
                 match file.read_to_string(&mut contents) {
-                    Ok(_) => println!("Puzzle # 1.1: {}", process_input_lines(contents)),
+                    Ok(_) => println!("Puzzle # 4.1: {}", process_input_lines(&contents)),
                     Err(e) => println!("Error reading file: {}", e),
                 }
             },
@@ -104,6 +114,52 @@ mod day4 {
     }
 
 }
+
+mod day4_2 {
+    use std::collections::HashSet;
+    use std::fs::File;
+    use std::io::Read;    
+
+    fn no_of_matches_by_card_minus_one( haystack: &str ) -> Vec<usize> {
+        haystack
+            .lines()
+            .map(|line| no_of_matches(line))
+            .collect::<Vec<_>>()
+    }
+
+    fn no_of_matches( haystack: &str ) -> usize {
+
+        let parts: Vec<&str> = haystack[haystack.find(":").unwrap()..].split('|').collect();
+        let my_nums : HashSet<i32> = parts[1].split_whitespace().filter_map(|s| s.parse().ok()).collect();
+        let win_nums : HashSet<i32> = parts[0].split_whitespace().filter_map(|s| s.parse().ok()).collect();
+        let i : HashSet<_> = my_nums.intersection(&win_nums).cloned().collect();
+
+        i.len()
+    }
+
+    pub fn no_of_scratch_cards() {
+        let mut contents = String::new();
+    
+        match File::open("data/d4_input.txt") {
+            Ok(mut file) => {
+                match file.read_to_string(&mut contents) {
+                    Ok(_) => {
+                        //println!("Puzzle # 4.2: {}", no_of_matches_by_card_minus_one(&contents))
+                        let indexed_matches = no_of_matches_by_card_minus_one(&contents);
+                        let indexed_card_count: Vec<usize> = vec![0, indexed_matches.len()];
+                        
+                    },
+                    Err(e) => println!("Error reading file: {}", e),
+                }
+            },
+            Err(e) => println!("Error opening file: {}", e),
+        }
+    }
+
+}
+
+
+
 mod day1 {
     use std::collections::HashMap;
     use std::fs::File;
@@ -190,7 +246,7 @@ mod day1 {
 
     pub fn puzzle2() {
         let mut contents = String::new();
-        let mut ret = -1;
+        let ret;
         
         match File::open("data/p1_input.txt") {
             Ok(mut file) => {
@@ -212,8 +268,12 @@ mod day1 {
 }
 
 fn main() {
-    day1::puzzle1();
-    day1::puzzle2();
+    if 0 != 0 {
+        day1::puzzle1();
+        day1::puzzle2();
+    }
+    
+    day4_1::point_value();
 }
 
 
