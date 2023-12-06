@@ -120,7 +120,7 @@ use std::fs::File;
 use std::hash::Hash;
 use std::io::Read;
 
-fn find_custom_range_lookup(range_map: &Vec<(u64, u64, u64)>, key: u64) -> u64 {
+fn find_custom_range_lookup_old(range_map: &Vec<(u64, u64, u64)>, key: u64) -> u64 {
     let mut ret = key;
     for e in range_map {
         let r = e.0..(e.0 + e.2);
@@ -131,6 +131,12 @@ fn find_custom_range_lookup(range_map: &Vec<(u64, u64, u64)>, key: u64) -> u64 {
         }
     }
     ret
+}
+
+fn find_custom_range_lookup(range_map: &Vec<(u64, u64, u64)>, key: u64) -> u64 {
+    range_map.iter()
+        .find(|&&(start, _, length)| key >= start && key < start + length)
+        .map_or(key, |&(start, offset, _)| key - start + offset)
 }
 
 fn extract_seeds_case_1(line: &str) -> Vec<u64> {
@@ -215,6 +221,13 @@ fn process_input_mod(inp: &str) -> u64 {
             _ => {}
         }
     }
+ 
+    seed2soil.sort_by(|a, b| a.0.cmp(&b.0));
+    soil2fertilizer.sort_by(|a, b| a.0.cmp(&b.0));
+    fertilizer2water.sort_by(|a, b| a.0.cmp(&b.0));
+    water2light.sort_by(|a, b| a.0.cmp(&b.0));
+    light2temperature.sort_by(|a, b| a.0.cmp(&b.0));
+    humidity2location.sort_by(|a, b| a.0.cmp(&b.0));
 
     let mut m = u64::MAX;
 
@@ -241,11 +254,11 @@ fn process_input_mod(inp: &str) -> u64 {
                     "Chaining [ {} => {} => {} => {} => {} => {} => {} => {} ]",
                     k, l1, l2, l3, l4, l5, l6, l7
                 ); */
-
+                
                 if i % 10000 == 0 {
                     print!("\r{:20} {:20} ", "Counting: ", i);
-                }
-                i = i + 1;
+                } 
+                i = i + 1;  
             }
             println!("\n{:20} {:20} {:20}", s, r, m);
         }
@@ -265,7 +278,7 @@ fn process_input(inp: &str, ranged_seeds: bool) -> u64 {
         seeds = seeds_all.into_iter().collect();
     }
 
-    println!("Number of seeds to process = {}", seeds.len());
+    //println!("Number of seeds to process = {}", seeds.len());
 
     let mut seed2soil: Vec<(u64, u64, u64)> = vec![];
     let mut soil2fertilizer: Vec<(u64, u64, u64)> = vec![];

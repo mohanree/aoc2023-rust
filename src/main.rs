@@ -3,7 +3,7 @@ mod day2;
 mod day4_1;
 mod day4_2;
 mod day5;
-mod day6;
+//mod day6;
 
 #[cfg(test)]
 mod tests {
@@ -95,8 +95,9 @@ fn main() {
         day5::lowest_location_number();
     }
 
-    day6::compute();
+    //day6::compute();
 
+    day5::lowest_location_number();
     
 }
 
