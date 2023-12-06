@@ -3,6 +3,7 @@ mod day2;
 mod day4_1;
 mod day4_2;
 mod day5;
+mod day6;
 
 #[cfg(test)]
 mod tests {
@@ -89,11 +90,14 @@ fn main() {
     if 0 != 0 {
         day1::puzzle1();
         day1::puzzle2();
+        day2::sum_valid_game_ids();
         day4_1::point_value();
         day5::lowest_location_number();
     }
 
-    day2::sum_valid_game_ids();
+    day6::compute();
+
+    
 }
 
     
