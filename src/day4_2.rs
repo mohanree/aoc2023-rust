@@ -33,7 +33,7 @@ pub fn no_of_scratch_cards() {
                 Ok(_) => {
                     //println!("Puzzle # 4.2: {}", no_of_matches_by_card_minus_one(&contents))
                     let indexed_matches = no_of_matches_by_card_minus_one(&contents);
-                    let indexed_card_count: Vec<usize> = vec![0, indexed_matches.len()];
+                    let _indexed_card_count: Vec<usize> = vec![0, indexed_matches.len()];
                 }
                 Err(e) => println!("Error reading file: {}", e),
             }

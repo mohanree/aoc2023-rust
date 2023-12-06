@@ -115,9 +115,9 @@ Your puzzle answer was 63179500.
 Both parts of this puzzle are complete! They provide two gold stars: **
 */
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashSet};
 use std::fs::File;
-use std::hash::Hash;
+
 use std::io::Read;
 
 fn find_custom_range_lookup_old(range_map: &Vec<(u64, u64, u64)>, key: u64) -> u64 {
@@ -149,7 +149,7 @@ fn extract_seeds_case_1(line: &str) -> Vec<u64> {
 }
 
 fn extract_seeds_case_2(line: &str) -> HashSet<u64> {
-    let mut s = extract_seeds_case_1(line);
+    let s = extract_seeds_case_1(line);
 
     let mut seeds: HashSet<u64> = HashSet::new();
 
@@ -231,7 +231,7 @@ fn process_input_mod(inp: &str) -> u64 {
 
     let mut m = u64::MAX;
 
-    let mut s = extract_seeds_case_1(sections[0]);
+    let s = extract_seeds_case_1(sections[0]);
     for chunk in s.chunks(2) {
         if let [s, r] = chunk {
             println!("\n{:20} {:20}", s, r);
