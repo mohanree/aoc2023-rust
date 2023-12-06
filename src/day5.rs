@@ -115,7 +115,6 @@ Your puzzle answer was 63179500.
 Both parts of this puzzle are complete! They provide two gold stars: **
 */
 
-
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::hash::Hash;
