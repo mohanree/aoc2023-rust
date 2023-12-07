@@ -25,7 +25,7 @@ fn process_input_line(haystack: &str) -> i32 {
     }
 }
 
-pub fn point_value() {
+pub fn play() {
     let mut contents = String::new();
 
     match File::open("data/d4_input.txt") {

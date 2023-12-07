@@ -110,7 +110,7 @@ fn process_input(inp: &str) -> i32 {
     res
 }
 
-pub fn compute() {
+pub fn play() {
     let mut contents = String::new();
 
     match File::open("data/d6_input.txt") {

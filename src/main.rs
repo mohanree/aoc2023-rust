@@ -1,10 +1,12 @@
 mod day1;
 mod day2;
+mod day4;
 mod day4_1;
 mod day4_2;
 mod day5;
 mod day6;
-mod day4;
+mod day7;
+
 
 #[cfg(test)]
 mod tests {
@@ -92,13 +94,13 @@ fn main() {
         day1::puzzle1();
         day1::puzzle2();
         day2::play();
-        day4::point_value();
-        day4_1::point_value();
-        day5::lowest_location_number();
-        day6::compute();
+        day4::play();
+        day4_1::play();
+        day5::play();
+        day6::play();
     }
 
-    day2::play();
+    day7::play();
 }
 
     

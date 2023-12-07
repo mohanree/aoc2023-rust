@@ -366,7 +366,7 @@ fn process_input(inp: &str, ranged_seeds: bool) -> u64 {
     m
 }
 
-pub fn lowest_location_number() {
+pub fn play() {
     let mut contents = String::new();
 
     match File::open("data/d5_input.txt") {
