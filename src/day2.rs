@@ -6,8 +6,8 @@ use regex::Regex;
 use std::fs::File;
 use std::io::Read;
 
-fn test_cond(t:(i32, i32, i32), cond:(i32, i32, i32)) -> bool {
-    t.0 <= cond.0 && t.1 <= cond.1 && t.2 <= cond.2 
+fn test_cond(t: (i32, i32, i32), cond: (i32, i32, i32)) -> bool {
+    t.0 <= cond.0 && t.1 <= cond.1 && t.2 <= cond.2
 }
 
 fn process_input_line(line: &str) -> i32 {
@@ -77,18 +77,17 @@ fn process_input_line2(line: &str) -> i32 {
     }
 
     //println!("id: {} -> {:?}", id, ds)
-    let (maxR, maxG, maxB) = ds.iter().fold((i32::MIN, i32::MIN, i32::MIN), |(maxR, maxG, maxB), &(val1, val2, val3)| {
-        (maxR.max(val1), maxG.max(val2), maxB.max(val3))
-    });
+    let (max_r, max_g, max_b) = ds.iter().fold(
+        (i32::MIN, i32::MIN, i32::MIN),
+        |(max_r, max_g, max_b), &(val1, val2, val3)| (max_r.max(val1), max_g.max(val2), max_b.max(val3)),
+    );
 
-    maxR * maxG * maxB
-
+    max_r * max_g * max_b
 }
 
 fn process_input2(inp: &str) -> i32 {
     inp.lines().map(|x| process_input_line2(x)).sum()
 }
-
 
 pub fn play() {
     let mut contents = String::new();
