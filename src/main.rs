@@ -6,6 +6,7 @@ mod day4_2;
 mod day5;
 mod day6;
 mod day7;
+mod day3;
 
 
 #[cfg(test)]
@@ -94,13 +95,17 @@ fn main() {
         day1::puzzle1();
         day1::puzzle2();
         day2::play();
+        day3::play();
         day4::play();
         day4_1::play();
         day5::play();
         day6::play();
+        day7::play();
     }
 
-    day7::play();
+    day3::play();
+
+    
 }
 
     
