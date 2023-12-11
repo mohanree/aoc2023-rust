@@ -109,7 +109,7 @@ fn main() {
         day11::play();
     }
 
-    day11::play();
+    day10::play();
 }
 
     

@@ -5,6 +5,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::fs::File;
 use std::io::Read;
 use lazy_static::lazy_static;
+use rayon::iter::ParallelDrainFull;
 
 lazy_static! {
     static ref PIPE_DIRS: HashMap<char, Vec<(isize, isize)>> = {
@@ -33,6 +34,7 @@ fn start_loc(grid: &Vec<Vec<char>>) -> (usize, usize) {
     (0, 0)
 }
 
+/*
 fn is_valid(loc: (isize, isize), grid: &Vec<Vec<char>>) -> bool {
     if loc.0 < 0 || loc.0 >= grid.len().try_into().unwrap() {
         return false;
@@ -68,7 +70,66 @@ fn bfs_walk ( loc: (usize, usize), grid: &Vec<Vec<char>>) {
     }
 }
 
-fn process_input_lines(haystack: &str) -> isize {
+*/
+
+fn is_valid(x: isize, y: isize, grid: &Vec<Vec<char>>) -> bool {
+    x >= 0 && y >= 0 && (x as usize) < grid.len() && (y as usize) < grid[0].len() && grid[x as usize][y as usize] != '.' 
+}
+
+fn bfs_walk(src: (usize, usize), grid: &Vec<Vec<char>>) -> usize {
+    let mut q: VecDeque<(usize, usize)> = VecDeque::new();
+    let mut visited: HashMap<(usize, usize), Option<(usize, usize)>> = HashMap::new();
+
+    q.push_back(src);
+    visited.insert(src, None);
+
+    let mut d = 0;
+    while let Some((x, y)) = q.pop_front() {
+        d += 1;
+
+        let p = grid[x][y];
+        for (dx, dy) in PIPE_DIRS.get(&p).unwrap() {
+            let new_x = (x as isize) + dx;
+            let new_y = (y as isize) + dy;
+
+            let new_loc = (new_x as usize, new_y as usize);
+
+            if is_valid(new_x, new_y, grid) && !visited.contains_key(&new_loc) {
+                visited.insert(new_loc, Some((x, y)));
+                q.push_back(new_loc);
+            }
+        }
+    }
+
+    //println!("Visted {:?} ", visited);
+    let mut paths: Vec<Vec<(usize, usize)>> = vec![];
+    let mut max_d = 0;
+    for (i,e) in visited.iter().enumerate() {
+        let mut c = e.1;
+        let mut path : Vec<(usize, usize)> = vec![];
+        if c.is_none() { continue; }
+        path.push(c.unwrap());
+        while true {
+            match c {
+                Some(t) => { 
+                    c = visited.get(t).unwrap();
+                    path.push(*t);
+                },
+                None => break
+            }      
+        }
+        max_d = max_d.max(path.len()-1);
+        paths.push(path);
+    }
+
+    //println!("Paths {:?} ", paths);
+    //println!("MAX {:?} ", max_d);
+
+    max_d
+}
+
+
+fn process_input_lines(haystack: &str) -> usize {
     let grid = haystack
         .lines()
         .map(|line| line.chars().map(|c| c).collect::<Vec<char>>())
@@ -76,20 +137,7 @@ fn process_input_lines(haystack: &str) -> isize {
 
     let s = start_loc(&grid);
 
-    let mut visited: HashSet<(isize, isize)> = HashSet::new();
-    let mut node2dist: HashMap<(isize, isize), isize> = HashMap::new();
-    bfs_walk(s, &grid);
-
-    println!("Grid {:?} -> {:?}", grid, s);
-    let mut u_grid: Vec<Vec<isize>>  = vec![vec![-1;grid[0].len()];grid.len()];
-    for (e, v) in node2dist.iter() {
-    //    u_grid[e.0 as isize][e.1 as isize] = *v;
-    }
-
-    println!("Node2Dist {:?}", node2dist);
-    println!("Ugrid {:?}", u_grid);
-
-    0
+    bfs_walk(s, &grid)
 }
 
 fn process_input_lines2(haystack: &str) -> u32 {
