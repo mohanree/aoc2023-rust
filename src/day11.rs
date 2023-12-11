@@ -8,7 +8,7 @@ use std::io::Read;
 fn is_valid(x: isize, y: isize, grid: &Vec<Vec<char>>) -> bool {
     x >= 0 && y >= 0 && (x as usize) < grid.len() && (y as usize) < grid[0].len()
 }
-
+// Testing function
 fn bfs_walk(src: (usize, usize), dest: (usize, usize), grid: &Vec<Vec<char>>) -> usize {
     let mut q: VecDeque<(usize, usize)> = VecDeque::new();
     let mut visited: HashMap<(usize, usize), Option<(usize, usize)>> = HashMap::new();
@@ -55,12 +55,11 @@ fn bfs_walk(src: (usize, usize), dest: (usize, usize), grid: &Vec<Vec<char>>) ->
 
     println!("Path {:?} ", path);
 
-    path.len()
+    path.len() - 1
 }
 
-fn find_all_galaxies_pairs(grid: &Vec<Vec<char>>) -> Vec<((usize, usize), (usize, usize))> {
-    let mut g: Vec<(usize, usize)> = grid
-        .iter()
+fn find_all_galaxies(grid: &Vec<Vec<char>>) -> Vec<(usize, usize)> {
+    grid.iter()
         .enumerate()
         .flat_map(|(i, row)| {
             row.iter()
@@ -68,7 +67,11 @@ fn find_all_galaxies_pairs(grid: &Vec<Vec<char>>) -> Vec<((usize, usize), (usize
                 .filter(|(j, &v)| v == '#')
                 .map(move |(j, _)| (i, j))
         })
-        .collect();
+        .collect()
+}
+
+fn find_all_galaxies_pairs(grid: &Vec<Vec<char>>) -> Vec<((usize, usize), (usize, usize))> {
+    let g: Vec<(usize, usize)> = find_all_galaxies(grid);
 
     let p: Vec<((usize, usize), (usize, usize))> = g
         .iter()
@@ -109,19 +112,61 @@ fn process_input_lines(haystack: &str) -> usize {
        grid.iter().for_each(|x| {
            println!("{:?}", x);
        });
+        find_all_galaxies_pairs(&grid).iter()
+        .map(|(s,d)| bfs_walk(*s, *d, &grid)).sum()
     */
 
     find_all_galaxies_pairs(&grid)
         .iter()
         .map(|(s, d)| s.0.abs_diff(d.0) + s.1.abs_diff(d.1))
-        .sum();
-
-    //find_all_galaxies_pairs(&grid).iter()
-    //    .map(|(s,d)| bfs_walk(*s, *d, &grid)).sum()
+        .sum()
 }
 
-fn process_input_lines2(haystack: &str) -> u32 {
-    0
+fn process_input_lines2(haystack: &str) -> usize {
+    let mut grid = haystack
+        .lines()
+        .map(|line| line.chars().map(|c| c).collect::<Vec<char>>())
+        .collect::<Vec<_>>();
+
+    let mut all_galaxies = find_all_galaxies(&grid);
+
+    let ex_rows: Vec<usize> = grid
+        .iter()
+        .enumerate()
+        .filter(|&(_i, r)| r.iter().all(|&x| x == '.'))
+        .map(|(i, _r)| i)
+        .collect();
+
+    let offset: usize = 1000000 - 1;
+    for (i, row) in ex_rows.iter().enumerate() {
+        all_galaxies.iter_mut().for_each(|(x, y)| {
+            if *x > *row + i * offset {
+                *x += offset;
+            }
+        });
+    }
+
+    let ex_cols: Vec<usize> = (0..grid[0].len())
+        .filter(|col| (0..grid.len()).all(|row| grid[row][*col] == '.'))
+        .collect();
+
+    for (i, col) in ex_cols.iter().enumerate() {
+        all_galaxies.iter_mut().for_each(|(x, y)| {
+            if *y > *col + i * offset {
+                *y += offset;
+            }
+        });
+    }
+
+    let p: Vec<((usize, usize), (usize, usize))> = all_galaxies
+        .iter()
+        .enumerate()
+        .flat_map(|(i, &x)| all_galaxies.iter().skip(i + 1).map(move |&y| (x, y)))
+        .collect();
+
+    p.iter()
+        .map(|(s, d)| s.0.abs_diff(d.0) + s.1.abs_diff(d.1))
+        .sum()
 }
 
 pub fn play() {
@@ -130,8 +175,8 @@ pub fn play() {
     match File::open("data/d11_input.txt") {
         Ok(mut file) => match file.read_to_string(&mut contents) {
             Ok(_) => {
-                println!("Puzzle # 10.1: {}", process_input_lines(&contents));
-                println!("Puzzle # 10.2: {}", process_input_lines2(&contents));
+                println!("Puzzle # 11.1: {}", process_input_lines(&contents));
+                println!("Puzzle # 11.2: {}", process_input_lines2(&contents));
             }
             Err(e) => println!("Error reading file: {}", e),
         },
