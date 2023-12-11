@@ -10,6 +10,7 @@ mod day7;
 mod day8;
 mod day9;
 mod day10;
+mod day11;
 
 #[cfg(test)]
 mod tests {
@@ -104,10 +105,11 @@ fn main() {
         day6::play();
         day7::play();
         day9::play();
+        day10::play();
+        day11::play();
     }
 
-    day10::play();
-    
+    day11::play();
 }
 
     
