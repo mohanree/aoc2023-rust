@@ -6,22 +6,20 @@ use std::fs::File;
 use std::io::Read;
 
 fn generate_combinations(s: &str) -> Vec<String> {
-    let mut r = vec![s.to_string()];
+    let mut queue = VecDeque::new();
+    queue.push_back(s.to_string());
 
-    let mut i = 0;
-    while i < r.len() {
-        if let Some(pos) = r[i].find('?') {
-            let mut v: Vec<String> = vec![];
+    let mut r = Vec::new();
+    while let Some(current) = queue.pop_front() {
+        if let Some(pos) = current.find('?') {
             for c in ['#', '.'] {
-                let mut t = r[i].clone();
-                t.replace_range(pos..pos + 1, &c.to_string());
-                v.push(t);
+                let mut new_str = current.clone();
+                new_str.replace_range(pos..pos + 1, &c.to_string());
+                queue.push_back(new_str);
             }
-            r.remove(i);
-            r.append(&mut v);
-            continue;
+        } else {
+            r.push(current);
         }
-        i += 1;
     }
 
     r
@@ -30,27 +28,21 @@ fn generate_combinations(s: &str) -> Vec<String> {
 fn process_input_line(line: &str) -> usize {
     let v: Vec<&str> = line.split_whitespace().collect();
 
-    let t: Vec<usize> = v[1]
+    let target_run_lengths: Vec<usize> = v[1]
         .split(',')
         .map(|x| x.parse::<usize>().unwrap())
         .collect();
-
-    let possible_conds = generate_combinations(v[0]);
-
-    let mut count = 0;
-    possible_conds.iter().for_each(|e| {
-        let runs: Vec<usize> = e
+    
+    generate_combinations(v[0])
+        .iter().filter(|e|{
+            let runs: Vec<usize> = e
             .split('.')
             .filter(|x| x.len() > 0)
             .map(|y| y.len())
             .collect();
-        //println!("{:?} =? {:?}", runs, t);
-        if t == runs {
-            count += 1;
+            target_run_lengths == runs 
         }
-    });
-
-    count
+    ).count()
 }
 
 fn process_input_lines(haystack: &str) -> usize {
