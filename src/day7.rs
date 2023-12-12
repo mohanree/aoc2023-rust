@@ -109,7 +109,6 @@ fn process_input_lines(haystack: &str) -> u32 {
                 return l.cmp(r);
             }
         }
-        println!("Hello haaaaaaaaaaaaa");
         1.cmp(&2)
     });
     hands.reverse();
@@ -257,7 +256,6 @@ fn process_input_lines2(haystack: &str) -> u32 {
                 return l.cmp(r);
             }
         }
-        println!("Hello haaaaaaaaaaaaa");
         1.cmp(&2)
     });
     hands.reverse();
