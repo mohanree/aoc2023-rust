@@ -3,37 +3,40 @@
 
 use std::collections::{HashMap, VecDeque};
 use std::fs::File;
-use std::io::Read;
+use std::io::Read; 
 
-fn generate_combinations_revised(s: &str, runs: &Vec<usize>) -> Vec<String> {
-    println!("{:?}", s);
-    let mut queue = VecDeque::new();
-    queue.push_back(s.to_string());
+fn compute(s: &str, runs: &Vec<usize>, cache: HashMap<(&str, &Vec<usize>), usize>) -> usize {
 
-    let s: usize = runs.iter().sum();
-    let mut r = Vec::new();
-    while let Some(current) = queue.pop_front() {
-        if let Some(pos) = current.find('?') {
-            for c in ['#', '.'] {
-                let mut new_str = current.clone();
-                new_str.replace_range(pos..pos + 1, &c.to_string());
-                queue.push_back(new_str);
-            }
-        } else {
-            if s == current.chars().filter(|e| e == &'#').count() {
-                r.push(current);
-            }
-            
+    println!("Processing  {:?}", s);
+    if s.is_empty() {
+        if runs.is_empty() { return 1; } else { return 0; }
+    } else if runs.is_empty() {
+        if s.find('#').is_some() { return 0; } else { return 1; }
+    } 
+
+    let ret = 0;
+    
+    match s.chars().next().unwrap() {
+        '.' => {
+            compute(s.get(1..).unwrap(), runs, cache);
+        },
+        '#' => {
+            print!("");
+        },
+        '?' => {
+
+        },
+        _ => {
+
         }
+
     }
 
-    println!("size = {:?}" ,r.len());
-
-    r
-}
+    0
+} 
 
 fn generate_combinations(s: &str, runs: &Vec<usize>) -> Vec<String> {
-    println!("{:?}", s);
+    //println!("{:?}", s);
     let mut queue = VecDeque::new();
     queue.push_back(s.to_string());
 
@@ -54,7 +57,7 @@ fn generate_combinations(s: &str, runs: &Vec<usize>) -> Vec<String> {
         }
     }
 
-    println!("size = {:?}" ,r.len());
+    //println!("size = {:?}" ,r.len());
 
     r
 }
@@ -62,7 +65,7 @@ fn generate_combinations(s: &str, runs: &Vec<usize>) -> Vec<String> {
 
 fn process_input_line(line: &str) -> usize {
     let v: Vec<&str> = line.split_whitespace().collect();
-
+    
     let target_run_lengths: Vec<usize> = v[1]
         .split(',')
         .map(|x| x.parse::<usize>().unwrap())
@@ -86,8 +89,9 @@ fn process_input_lines(haystack: &str) -> usize {
 
 
 fn process_input_line2(line: &str) -> usize {
+    let mut cache: HashMap<&str, usize> = HashMap::new();
     let v: Vec<&str> = line.split_whitespace().collect();
-    println!("{:?}", v[0]);
+    //println!("{:?}", v[0]);
 
     let target_run_lengths: Vec<usize> = v[1]
         .split(',')
@@ -96,6 +100,7 @@ fn process_input_line2(line: &str) -> usize {
 
     let repeated_run_lengths: Vec<_> = (0..5).flat_map(|_| target_run_lengths.iter().cloned()).collect();
 
+    /*
     generate_combinations(&v[0].repeat(5), &repeated_run_lengths)
         .iter().filter(|e|{
             let runs: Vec<usize> = e
@@ -105,7 +110,10 @@ fn process_input_line2(line: &str) -> usize {
             .collect();
             repeated_run_lengths == runs 
         }
-    ).count()
+    ).count() 
+*/
+    let cache= HashMap::new();
+    compute(&v[0].repeat(5), &repeated_run_lengths, cache)
 }
 
 fn process_input_lines2(haystack: &str) -> usize {
