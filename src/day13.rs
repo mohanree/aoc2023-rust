@@ -7,40 +7,54 @@ use std::io::Read;
 
 fn mirror_on_row( grid: &Vec<Vec<char>> ) -> Option<usize> {
 
-    let mut los = usize::MAX;
+    let mut los = (usize::MAX, usize::MAX);
     for i in 0..grid.len()-1{
-        if grid[i] == grid [i+1] { los = i; }
+        if grid[i] == grid [i+1] { los = (i,i+1); }
     }
+    if los == (usize::MAX, usize::MAX) { return  None;}
 
-    for j in 0..los {
-        let idx = los + j + 1; 
-        if idx >= grid.len() {continue;}
-        if grid[j] != grid[idx] { return None;}
-    }
+    let mut idx = los;
+    loop {
+        if idx.0 == 0 || idx.1 == grid.len()-1 { break; }
 
-    Some(los)
+        idx = (idx.0-1, idx.1+1);
+
+        println!("{:?} {:?} {:?} {:?}", los, idx, grid[idx.0], grid[idx.1]) ;
+        if grid[idx.0] != grid[idx.1] { return None;}
+    } 
+      
+    println!("los {:?} ", los);
+    Some(los.0+1)
 }
 
 fn mirror_on_col( grid: &Vec<Vec<char>> ) -> Option<usize> {
 
-    let mut los = usize::MAX;
+    let mut los = (usize::MAX, usize::MAX);
     if let Some(row_len) = grid.first().map(|row| row.len()) {
         for i in 0..row_len - 1 {
             if grid.iter().all(|row| row.get(i) == row.get(i+1)) {
-                los = i;
+                los = (i, i+1);
             }
         }
+        if los == (usize::MAX, usize::MAX) { return  None;}
 
-        for j in 0..los {
-            let idx = los + j + 1;
-            if idx >= row_len {continue;} 
-            if grid.iter().any(|row| row.get(j) != row.get(idx)) {
+        let mut idx = los;
+        loop {
+            println!("-----------> {:?} {:?} {:?}", los, idx, row_len);
+
+            if idx.0 == 0 || idx.1 == row_len-1  { break; }
+
+            idx = (idx.0-1, idx.1+1);
+            //println!("{:?} {:?} {:?} {:?}", los, idx, grid[idx.0], grid[idx.1]) ;
+            println!("{:?} {:?} {:?}", los, idx, row_len);
+
+            if grid.iter().any(|row| { println!("{:?} ----", row); row.get(idx.0) != row.get(idx.1)}) {
                 return None;
-            }
+            }       
         }
     }
 
-    Some(los)
+    Some(los.0+1)
 }
 
 fn process_input_block(block: &str) -> usize {
@@ -51,21 +65,23 @@ fn process_input_block(block: &str) -> usize {
         .collect::<Vec<_>>();
 
     let r = mirror_on_row(&grid);
+    println!("Rows {:?}", r);
+
     let c = mirror_on_col(&grid);
+    println!("Columns {:?}", c);
 
     let mut answer = 0;
     answer += match r {
-        Some(v) => v,
+        Some(v) => v*100,
         None => { 0 },
     };
 
     answer += match c {
-        Some(v) => v * 100,
+        Some(v) => v ,
         None => { 0 },
     };
 
-
-    println!("{:?} {:?}", r, c);
+    println!("r = {:?} c = {:?}", r, c);
    
     answer
 }
