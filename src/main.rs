@@ -14,6 +14,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day16;
 #[cfg(test)]
 mod tests {
     use super::*; // Import the necessary functions from the parent module
@@ -112,7 +113,7 @@ fn main() {
 
     }
 
-    day14::play();
+    day16::play();
 }
 
     
