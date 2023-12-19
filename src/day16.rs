@@ -9,13 +9,9 @@ use std::io::Read;
 struct Graph {
     adj_matrix: Vec<Vec<bool>>,
     visited: Vec<bool>,
-    grid: &Vec<Vec<char>>,
 }
 
 impl Graph {
-    fn new( grid: &Vec<Vec<char>> ) {
-
-    }
 }
 
 #[derive(Debug, Clone, Copy)]
