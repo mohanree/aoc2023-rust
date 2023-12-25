@@ -100,7 +100,7 @@ fn process_input_line2(line: &str) -> usize {
 
     let repeated_run_lengths: Vec<_> = (0..5).flat_map(|_| target_run_lengths.iter().cloned()).collect();
 
-    /*
+    
     generate_combinations(&v[0].repeat(5), &repeated_run_lengths)
         .iter().filter(|e|{
             let runs: Vec<usize> = e
@@ -111,9 +111,9 @@ fn process_input_line2(line: &str) -> usize {
             repeated_run_lengths == runs 
         }
     ).count() 
-*/
-    let cache= HashMap::new();
-    compute(&v[0].repeat(5), &repeated_run_lengths, cache)
+
+    //let cache= HashMap::new();
+    //compute(&v[0].repeat(5), &repeated_run_lengths, cache)
 }
 
 fn process_input_lines2(haystack: &str) -> usize {

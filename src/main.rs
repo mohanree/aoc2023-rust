@@ -15,8 +15,9 @@ mod day12;
 mod day13;
 mod day14;
 mod day16;
-mod day18;
-mod util;
+mod day24;
+//mod day18;
+//mod util;
 
 #[cfg(test)]
 mod tests {
@@ -116,7 +117,7 @@ fn main() {
 
     }
 
-    day18::play();
+    day24::play();
 }
 
     
