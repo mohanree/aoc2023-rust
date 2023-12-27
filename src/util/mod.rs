@@ -7,14 +7,16 @@ pub mod util {
 
         print!("  ");
         for j in 0..grid[0].len() {
-            print!("{:3} ", j);
+            print!("{:8} ", j);
         }
         println!();
 
+        let mut c = 0;
         for (i, row) in grid.iter().enumerate() {
             print!("{:3} ", i);
             for &val in row {
-                print!("{:3} ", val);
+                print!("{:3}({:3}) ", val,c);
+                c += 1;
             }
 
             println!();
@@ -36,7 +38,8 @@ pub mod util {
         for (i, row) in grid.iter().enumerate() {
             print!("{:3} ", i);
             for &val in row {
-                print!("{:3} ", val);
+                if val {print!("T   ");}
+                else {print!("F   ");}
             }
             println!();
         }
