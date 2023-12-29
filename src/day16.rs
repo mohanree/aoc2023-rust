@@ -1,202 +1,120 @@
 /*
 */
 
-
+use crate::util::util;
+use std::collections::HashSet;
+use std::fmt;
 use std::fs::File;
 use std::io::Read;
-
 
 struct Graph {
     adj_matrix: Vec<Vec<bool>>,
     visited: Vec<bool>,
 }
 
-impl Graph {
-}
+impl Graph {}
 
-#[derive(Debug, Clone, Copy)]
-#[derive(PartialEq)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 enum DirT {
     North = 1,
     South = 2,
     East = 3,
     West = 4,
+    Unknown = 5,
+}
+impl DirT {
+    fn to_str(&self) -> &str {
+        match self {
+            DirT::North => "^",
+            DirT::South => "v",
+            DirT::East => ">",
+            DirT::West => "<",
+            DirT::Unknown => "",
+        }
+    }
 }
 
-fn print_2d_vec_with_indexes(grid: &Vec<Vec<char>>) {
+fn print_2d_vec_generic(grid: &Vec<Vec<(bool, HashSet<DirT>)>>) {
     if grid.is_empty() || grid[0].is_empty() {
         return;
     }
 
-    print!("  ");
-    for j in 0..grid[0].len() {
-        print!("{:3} ", j);
-    }
-    println!();
+    let column_headers = (0..grid[0].len())
+        .map(|j| format!("{:^8}", j))
+        .collect::<String>();
+    println!("      {}", column_headers);
 
     for (i, row) in grid.iter().enumerate() {
-        print!("{:3} ", i);
-        for &val in row {
-            print!("{:3} ", val);
-        }
-
-        println!();
+        let row_values = row
+            .iter()
+            .map(|&(energized, ref directions)| {
+                if !energized {
+                    ".       ".to_string()
+                } else if directions.is_empty() {
+                    "?     ".to_string()
+                } else {
+                    let dir_chars: String = directions.iter().map(DirT::to_str).collect();
+                    format!("{:<8}", dir_chars)
+                }
+            })
+            .collect::<String>();
+        println!("{:^8} {}", i, row_values);
     }
 }
 
-fn print_2d_vec_with_indexes_b(grid: &Vec<Vec<bool>>) {
-    if grid.is_empty() || grid[0].is_empty() {
-        return;
-    }
-
-    print!("  ");
-    for j in 0..grid[0].len() {
-        print!("{:3} ", j);
-    }
-    println!();
-
-    for (i, row) in grid.iter().enumerate() {
-        print!("{:3} ", i);
-        for &val in row {
-            print!("{:3} ", val);
-        }
-        println!();
-    }
-}
-
-fn is_valid(pos: (usize, usize), grid: &Vec<Vec<char>>) -> bool {
-
-    if pos.0 < 0 || pos.1 < 0 {
-        return false;
-    }
-    if pos.0 >= grid.len() || pos.1 >= grid[0].len() {
-        return false;
-    }
-
-    true
-}
-
-fn get_next( pos: (usize, usize), dir: DirT , grid: &Vec<Vec<char>>) -> Option<(usize, usize)>{
-
+fn get_next(pos: (usize, usize), dir: DirT, grid: &Vec<Vec<char>>) -> Option<(usize, usize)> {
+    let (row, col) = pos;
     match dir {
-        DirT::North =>  {
-            if pos.0 != 0 {
-                return Some((pos.0 - 1, pos.1));
-            }
-        },
-        DirT::South =>  {
-            if pos.0 < grid.len() - 1   {
-                return Some((pos.0+1, pos.1));
-            }
-        },
-        DirT::East =>  {
-            if pos.1 < grid[0].len() - 1   {
-                return Some((pos.0, pos.1+1));
-            }
-        },
-        DirT::West =>  {
-            if pos.1 != 0 {
-                return Some((pos.0, pos.1-1));
-            }
-        },
+        DirT::North if row > 0 => Some((row - 1, col)),
+        DirT::South if row + 1 < grid.len() => Some((row + 1, col)),
+        DirT::East if col + 1 < grid[0].len() => Some((row, col + 1)),
+        DirT::West if col > 0 => Some((row, col - 1)),
+        _ => None,
     }
-
-    None
 }
 
-fn beam(pos: (usize, usize), dir: DirT, visited: &mut Vec<Vec<bool>>, grid: &Vec<Vec<char>>) {
-    //print_2d_vec_with_indexes(&grid);
-    //print_2d_vec_with_indexes_b(&visited);
-    print!("{:?} {:?}, ", pos, dir);
+fn beam(
+    pos: (usize, usize),
+    dir: DirT,
+    beam_tracker: &mut Vec<Vec<(bool, HashSet<DirT>)>>,
+    grid: &Vec<Vec<char>>,
+) {
+    let (energized, directions) = &mut beam_tracker[pos.0][pos.1];
 
-    visited[pos.0][pos.1] = true;
-   
+    if *energized && directions.contains(&dir) {
+        return;
+    }
 
-    match grid[pos.0][pos.1] {
-        '|' => {
-            if dir == DirT::North || dir == DirT::South {
-                if let Some(t) = get_next(pos, dir, grid) {
-                    beam(t, dir, visited, grid);
-                }
-            }
-            else {
-                if let Some(t) = get_next(pos, DirT::North, grid) {
-                    beam(t, DirT::North, visited, grid);
-                }
-                if let Some(t) = get_next(pos, DirT::South, grid) {
-                    beam(t, DirT::South, visited, grid);
-                }
-            }
+    //print!("{:?} - {:?} :", energized, directions);
+    *energized = true;
+    let t = directions.insert(dir);
+    directions.remove(&DirT::Unknown);
 
-        },
-        '-' => {
-            if dir == DirT::West || dir == DirT::East {
-                if let Some(t) = get_next(pos, dir, grid) {
-                    beam(t, dir, visited, grid);
-                }
-            }
-            else {
-                if let Some(t) = get_next(pos, DirT::East, grid) {
-                    beam(t, DirT::East, visited, grid);
-                }
-                if let Some(t) = get_next(pos, DirT::West, grid) {
-                    beam(t, DirT::West, visited, grid);
-                }
-            }
+    //util::print_2d_vec_with_indexes(&grid);
+    //println!("{:?} {:?} - {:?} - {:?} x {:?}", pos, dir.to_str(), energized, directions, t);
+    //print_2d_vec_generic(&beam_tracker);
 
-        },
-        '\\' => {
-            if dir == DirT::South {
-                if let Some(t) = get_next(pos, DirT::East, grid) {
-                    beam(t, DirT::East, visited, grid);
-                }
-            }
-            else if dir == DirT::North {
-                if let Some(t) = get_next(pos, DirT::West, grid) {
-                    beam(t, DirT::West, visited, grid);
-                }
-            }
-            else if dir == DirT::East {
-                if let Some(t) = get_next(pos, DirT::South, grid) {
-                    beam(t, DirT::South, visited, grid);
-                }
-            }
-            else if dir == DirT::West {
-                if let Some(t) = get_next(pos, DirT::North, grid) {
-                    beam(t, DirT::North, visited, grid);
-                }
-            }
+    let next_dirs = match (grid[pos.0][pos.1], dir) {
+        ('|', DirT::North) | ('|', DirT::South) => vec![dir],
+        ('|', _) => vec![DirT::North, DirT::South],
+        ('-', DirT::East) | ('-', DirT::West) => vec![dir],
+        ('-', _) => vec![DirT::East, DirT::West],
+        ('\\', DirT::South) => vec![DirT::East],
+        ('\\', DirT::North) => vec![DirT::West],
+        ('\\', DirT::East) => vec![DirT::South],
+        ('\\', DirT::West) => vec![DirT::North],
+        ('/', DirT::North) => vec![DirT::East],
+        ('/', DirT::South) => vec![DirT::West],
+        ('/', DirT::West) => vec![DirT::South],
+        ('/', DirT::East) => vec![DirT::North],
+        _ => vec![dir],
+    };
 
-        },
-        '/' => {
-            if dir == DirT::North {
-                if let Some(t) = get_next(pos, DirT::East, grid) {
-                    beam(t, DirT::East, visited, grid);
-                }
-            }
-            else if dir == DirT::South {
-                if let Some(t) = get_next(pos, DirT::West, grid) {
-                    beam(t, DirT::West, visited, grid);
-                }
-            }
-            else if dir == DirT::West {
-                if let Some(t) = get_next(pos, DirT::South, grid) {
-                    beam(t, DirT::South, visited, grid);
-                }
-            }
-            else if dir == DirT::East {
-                if let Some(t) = get_next(pos, DirT::North, grid) {
-                    beam(t, DirT::North, visited, grid);
-                }
-            }
-        },
-        _ => {
-            if let Some(t) = get_next(pos, dir, grid) {
-                beam(t, dir, visited, grid);
-            }
+    for next_dir in next_dirs {
+        if let Some(next_pos) = get_next(pos, next_dir, grid) {
+            beam(next_pos, next_dir, beam_tracker, grid);
         }
     }
-    
 }
 
 fn process_input_block(block: &str) -> usize {
@@ -210,13 +128,18 @@ fn process_input_block(block: &str) -> usize {
         return 0;
     }
 
-    print_2d_vec_with_indexes(&grid);
-    let mut visited: Vec<Vec<bool>> = vec![vec![false;grid[0].len()];grid.len()];
-    beam((0,0), DirT::East, &mut visited, &grid);
+    util::print_2d_vec_with_indexes(&grid);
+    let mut beam_tracker: Vec<Vec<(bool, HashSet<DirT>)>> =
+        vec![vec![(false, HashSet::from([DirT::Unknown])); grid[0].len()]; grid.len()];
+    beam((0, 0), DirT::East, &mut beam_tracker, &grid);
 
-    print_2d_vec_with_indexes_b(&visited);
+    print_2d_vec_generic(&beam_tracker);
 
-    0
+    beam_tracker
+        .iter()
+        .flat_map(|row| row.iter())
+        .filter(|&&(energized, _)| energized)
+        .count()
 }
 
 fn process_input_lines(haystack: &str) -> usize {
