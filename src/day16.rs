@@ -118,7 +118,7 @@ fn beam(
 }
 
 fn process_input_block(block: &str) -> usize {
-    println!("Proceess block {:?}", block);
+    //println!("Proceess block {:?}", block);
     let grid = block
         .lines()
         .map(|line| line.chars().map(|c| c).collect::<Vec<char>>())
@@ -128,12 +128,12 @@ fn process_input_block(block: &str) -> usize {
         return 0;
     }
 
-    util::print_2d_vec_with_indexes(&grid);
+    //util::print_2d_vec_with_indexes(&grid);
     let mut beam_tracker: Vec<Vec<(bool, HashSet<DirT>)>> =
         vec![vec![(false, HashSet::from([DirT::Unknown])); grid[0].len()]; grid.len()];
     beam((0, 0), DirT::East, &mut beam_tracker, &grid);
 
-    print_2d_vec_generic(&beam_tracker);
+    //print_2d_vec_generic(&beam_tracker);
 
     beam_tracker
         .iter()
@@ -146,13 +146,68 @@ fn process_input_lines(haystack: &str) -> usize {
     process_input_block(haystack)
 }
 
-fn process_input_line2(_line: &str) -> usize {
-    0
+fn process_input_block2(block: &str) -> usize {
+    //println!("Proceess block {:?}", block);
+    let grid = block
+        .lines()
+        .map(|line| line.chars().map(|c| c).collect::<Vec<char>>())
+        .collect::<Vec<_>>();
+
+    if grid.is_empty() {
+        return 0;
+    }
+
+    let grid_height = grid.len();
+    let grid_width = if grid_height > 0 { grid[0].len() } else { 0 };
+
+    //util::print_2d_vec_with_indexes(&grid);
+
+    let mut starts: Vec<(usize, usize, DirT)> = vec![];
+
+    for i in 0..grid_width {
+        if grid[0][i] == '.' {
+            starts.push((0, i, DirT::South));
+        }
+        if grid[grid_height - 1][i] == '.' {
+            starts.push((grid_height - 1, i, DirT::North));
+        }
+    }
+
+    for i in 0..grid_height {
+        if grid[i][0] == '.' {
+            starts.push((i, 0, DirT::East))
+        }
+        if grid[i][grid_width - 1] == '.' {
+            starts.push((i, grid_width - 1, DirT::West))
+        }
+    }
+
+    //println!("Starts {:?}", starts);
+
+    let beam_me_up_scotty = |start: (usize, usize), dir: DirT| -> usize {
+        let mut beam_tracker: Vec<Vec<(bool, HashSet<DirT>)>> =
+            vec![vec![(false, HashSet::from([DirT::Unknown])); grid[0].len()]; grid.len()];
+        beam(start, dir, &mut beam_tracker, &grid);
+
+        //print_2d_vec_generic(&beam_tracker);
+
+        beam_tracker
+            .iter()
+            .flat_map(|row| row.iter())
+            .filter(|&&(energized, _)| energized)
+            .count()
+    };
+
+    let mut max_beam = 0;
+    starts.iter().for_each(|e| {
+        max_beam = beam_me_up_scotty((e.0, e.1), e.2).max(max_beam);
+    });
+
+    max_beam
 }
 
-fn process_input_lines2(_haystack: &str) -> usize {
-    // haystack.lines().map(|line| process_input_line2(line)).sum()
-    0
+fn process_input_lines2(haystack: &str) -> usize {
+    process_input_block2(haystack)
 }
 
 pub fn play() {
@@ -162,7 +217,7 @@ pub fn play() {
         Ok(mut file) => match file.read_to_string(&mut contents) {
             Ok(_) => {
                 println!("Puzzle # 16.1: {}", process_input_lines(&contents));
-                //println!("Puzzle # 16.2: {}", process_input_lines2(&contents));
+                println!("Puzzle # 16.2: {}", process_input_lines2(&contents));
             }
             Err(e) => println!("Error reading file: {}", e),
         },
