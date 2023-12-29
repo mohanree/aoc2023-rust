@@ -118,10 +118,12 @@ fn main() {
         day9::play();
         day10::play();
         day11::play();
-
+        day15::play();
+        day16::play();
+        day21::play();
     }
 
-    day15::play();
+    day23::play();
 }
 
     
