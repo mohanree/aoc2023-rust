@@ -1,11 +1,11 @@
 /*
 */
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, VecDeque};
 use std::fs::File;
 use std::io::Read;
 use lazy_static::lazy_static;
-use rayon::iter::ParallelDrainFull;
+
 
 lazy_static! {
     static ref PIPE_DIRS: HashMap<char, Vec<(isize, isize)>> = {
@@ -104,12 +104,12 @@ fn bfs_walk(src: (usize, usize), grid: &Vec<Vec<char>>) -> usize {
     //println!("Visted {:?} ", visited);
     let mut paths: Vec<Vec<(usize, usize)>> = vec![];
     let mut max_d = 0;
-    for (i,e) in visited.iter().enumerate() {
+    for (_i,e) in visited.iter().enumerate() {
         let mut c = e.1;
         let mut path : Vec<(usize, usize)> = vec![];
         if c.is_none() { continue; }
         path.push(c.unwrap());
-        while true {
+        loop {
             match c {
                 Some(t) => { 
                     c = visited.get(t).unwrap();
@@ -140,7 +140,7 @@ fn process_input_lines(haystack: &str) -> usize {
     bfs_walk(s, &grid)
 }
 
-fn process_input_lines2(haystack: &str) -> u32 {
+fn process_input_lines2(_haystack: &str) -> u32 {
     0
 }
 

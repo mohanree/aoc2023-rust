@@ -4,7 +4,7 @@
 use std::collections::{HashMap, VecDeque, HashSet};
 use std::fs::File;
 use std::io::Read;
-use std::vec;
+
 use crate::util::util;
 
 fn dfs( n: usize, depth: usize, depth_map:&mut HashMap<usize, HashSet<usize>>, visited: &mut HashSet<usize>, adj_list:&HashMap<usize, HashSet<usize>> ) {
@@ -25,7 +25,7 @@ fn dfs( n: usize, depth: usize, depth_map:&mut HashMap<usize, HashSet<usize>>, v
     }     
 }
 
-fn bfs(start: usize, steps:usize, adj_list:&HashMap<usize, HashSet<usize>> ) {
+fn bfs(start: usize, _steps:usize, adj_list:&HashMap<usize, HashSet<usize>> ) {
 
     let mut depth_map: HashMap<usize, usize> = HashMap::new();
     let mut visted: HashSet<usize> = HashSet::new();
@@ -75,7 +75,7 @@ fn process_input_block(block: &str) -> usize {
     let grid_height = grid.len();
     let grid_width = if grid_height > 0 { grid[0].len() } else { 0 };
 
-    let mut visited: HashSet<usize> = HashSet::new();
+    let _visited: HashSet<usize> = HashSet::new();
     
     let compute_idx = 
         |x:i32, y:i32, grid: &Vec<Vec<char>>| {
@@ -119,11 +119,11 @@ fn process_input_lines(haystack: &str) -> usize {
     process_input_block(haystack)
 }
 
-fn process_input_line2(line: &str) -> usize {
+fn process_input_line2(_line: &str) -> usize {
     0
 }
 
-fn process_input_lines2(haystack: &str) -> usize {
+fn process_input_lines2(_haystack: &str) -> usize {
     // haystack.lines().map(|line| process_input_line2(line)).sum()
     0
 }

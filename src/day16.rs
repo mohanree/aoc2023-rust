@@ -1,7 +1,7 @@
 /*
 */
 
-use std::collections::{HashMap, VecDeque};
+
 use std::fs::File;
 use std::io::Read;
 
@@ -223,11 +223,11 @@ fn process_input_lines(haystack: &str) -> usize {
     process_input_block(haystack)
 }
 
-fn process_input_line2(line: &str) -> usize {
+fn process_input_line2(_line: &str) -> usize {
     0
 }
 
-fn process_input_lines2(haystack: &str) -> usize {
+fn process_input_lines2(_haystack: &str) -> usize {
     // haystack.lines().map(|line| process_input_line2(line)).sum()
     0
 }

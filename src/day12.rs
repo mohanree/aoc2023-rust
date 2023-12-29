@@ -14,7 +14,7 @@ fn compute(s: &str, runs: &Vec<usize>, cache: HashMap<(&str, &Vec<usize>), usize
         if s.find('#').is_some() { return 0; } else { return 1; }
     } 
 
-    let ret = 0;
+    let _ret = 0;
     
     match s.chars().next().unwrap() {
         '.' => {
@@ -89,7 +89,7 @@ fn process_input_lines(haystack: &str) -> usize {
 
 
 fn process_input_line2(line: &str) -> usize {
-    let mut cache: HashMap<&str, usize> = HashMap::new();
+    let _cache: HashMap<&str, usize> = HashMap::new();
     let v: Vec<&str> = line.split_whitespace().collect();
     //println!("{:?}", v[0]);
 

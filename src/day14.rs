@@ -1,7 +1,7 @@
 /*
 */
 
-use std::collections::{HashMap, VecDeque};
+
 use std::fs::File;
 use std::io::Read;
 
@@ -51,7 +51,7 @@ fn tilt(grid: &mut Vec<Vec<char>>) -> usize {
     let mut load_factor = grid.len();
     grid.iter()
         .map(|x| {
-            let t = x.iter().filter(|y| *y == &'O').count();
+            let _t = x.iter().filter(|y| *y == &'O').count();
             let r = load_factor * x.iter().filter(|y| *y == &'O').count();
             //println!("{:?} -> {:?} {:?} {:?}", load_factor, r, x, t);
             load_factor -= 1;
@@ -77,11 +77,11 @@ fn process_input_lines(haystack: &str) -> usize {
         .sum()
 }
 
-fn process_input_line2(line: &str) -> usize {
+fn process_input_line2(_line: &str) -> usize {
     0
 }
 
-fn process_input_lines2(haystack: &str) -> usize {
+fn process_input_lines2(_haystack: &str) -> usize {
     // haystack.lines().map(|line| process_input_line2(line)).sum()
     0
 }

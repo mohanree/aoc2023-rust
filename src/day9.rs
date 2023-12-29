@@ -1,9 +1,9 @@
 /*
 */
 
-use std::collections::HashMap;
+
 use std::fs::File;
-use std::io::{Read, Cursor};
+use std::io::{Read};
 
 fn process_input_line(line: &str) -> i32 {
     let d: Vec<i32> = line.split_whitespace()

@@ -38,7 +38,7 @@ fn hand_type(h: &str) -> HandType {
 
     let m = c.iter().map(|(_, count)| count).max().unwrap_or(&0);
 
-    let ret: HandType;
+    let _ret: HandType;
     match m {
         5 => HandType::FiveOfKind,
         4 => HandType::FourOfkind,
@@ -134,7 +134,7 @@ fn hand_type2(h: &str) -> HandType {
 
     let m = c.iter().map(|(_, count)| count).max().unwrap_or(&0);
 
-    let ret: HandType;
+    let _ret: HandType;
     match m {
         5 => HandType::FiveOfKind,
         4 => {

@@ -1,11 +1,11 @@
 /*
 */
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashSet};
 use std::fs::File;
 use std::io::Read;
-use std::vec;
-use crate::util::util;
+
+
 use petgraph::Graph;
 use petgraph::Undirected;
 
@@ -13,7 +13,7 @@ use petgraph::Undirected;
 fn process_input_block(block: &str) -> usize {
     
     let mut g = Graph::<_, _, Undirected>::new_undirected();
-    let grid = block
+    let _grid = block
         .lines()
         .for_each(|line| {
             let t1: Vec<&str> = line.split(": ").collect();
@@ -34,11 +34,11 @@ fn process_input_lines(haystack: &str) -> usize {
     process_input_block(haystack)
 }
 
-fn process_input_line2(line: &str) -> usize {
+fn process_input_line2(_line: &str) -> usize {
     0
 }
 
-fn process_input_lines2(haystack: &str) -> usize {
+fn process_input_lines2(_haystack: &str) -> usize {
     // haystack.lines().map(|line| process_input_line2(line)).sum()
     0
 }

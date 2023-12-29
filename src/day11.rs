@@ -64,7 +64,7 @@ fn find_all_galaxies(grid: &Vec<Vec<char>>) -> Vec<(usize, usize)> {
         .flat_map(|(i, row)| {
             row.iter()
                 .enumerate()
-                .filter(|(j, &v)| v == '#')
+                .filter(|(_j, &v)| v == '#')
                 .map(move |(j, _)| (i, j))
         })
         .collect()
@@ -123,7 +123,7 @@ fn process_input_lines(haystack: &str) -> usize {
 }
 
 fn process_input_lines2(haystack: &str) -> usize {
-    let mut grid = haystack
+    let grid = haystack
         .lines()
         .map(|line| line.chars().map(|c| c).collect::<Vec<char>>())
         .collect::<Vec<_>>();
@@ -139,7 +139,7 @@ fn process_input_lines2(haystack: &str) -> usize {
 
     let offset: usize = 1000000 - 1;
     for (i, row) in ex_rows.iter().enumerate() {
-        all_galaxies.iter_mut().for_each(|(x, y)| {
+        all_galaxies.iter_mut().for_each(|(x, _y)| {
             if *x > *row + i * offset {
                 *x += offset;
             }
@@ -151,7 +151,7 @@ fn process_input_lines2(haystack: &str) -> usize {
         .collect();
 
     for (i, col) in ex_cols.iter().enumerate() {
-        all_galaxies.iter_mut().for_each(|(x, y)| {
+        all_galaxies.iter_mut().for_each(|(_x, y)| {
             if *y > *col + i * offset {
                 *y += offset;
             }

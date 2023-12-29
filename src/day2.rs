@@ -56,7 +56,7 @@ fn process_input_line2(line: &str) -> i32 {
     let Some(caps) = re.captures(line) else {
         return 0;
     };
-    let id: i32 = caps[1].parse::<i32>().unwrap();
+    let _id: i32 = caps[1].parse::<i32>().unwrap();
     let mut ds: Vec<(i32, i32, i32)> = Vec::new();
 
     for p in caps[2].split(";") {

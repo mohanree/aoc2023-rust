@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashSet};
 use std::fs::File;
 use std::io::Read;
 
@@ -28,7 +28,7 @@ fn process_input_lines_p2(haystack: &str) -> i32 {
 
 fn process_input_line2(haystack: &str) -> usize {
     let t = haystack.find(":").unwrap();
-    let id = &haystack[..t];
+    let _id = &haystack[..t];
     let parts: Vec<&str> = haystack[t..].split('|').collect();
     let my_nums: HashSet<i32> = parts[1]
         .split_whitespace()
