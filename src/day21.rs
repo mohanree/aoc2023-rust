@@ -1,63 +1,11 @@
 /*
 */
 
-use std::collections::{HashMap, VecDeque, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::fs::File;
 use std::io::Read;
 
 use crate::util::util;
-
-fn dfs( n: usize, depth: usize, depth_map:&mut HashMap<usize, HashSet<usize>>, visited: &mut HashSet<usize>, adj_list:&HashMap<usize, HashSet<usize>> ) {
-
-    if depth > 64 { return;}
-
-    visited.insert(n);
-    depth_map.entry(depth).or_insert_with(HashSet::new).insert(n);
-    
-    //println!("Depth {:?} Node {:?} ", depth, n);
-
-    if let Some(paths) = adj_list.get(&n) {
-        for p in paths {
-            //if !visited.contains(p) {
-                dfs(*p, depth+1, depth_map, visited, adj_list);
-            //} 
-        }
-    }     
-}
-
-fn bfs(start: usize, _steps:usize, adj_list:&HashMap<usize, HashSet<usize>> ) {
-
-    let mut depth_map: HashMap<usize, usize> = HashMap::new();
-    let mut visted: HashSet<usize> = HashSet::new();
-    let mut q: VecDeque<usize> = VecDeque::new();
-    
-    depth_map.insert(start,0);
-    q.push_back(start);
-    visted.insert(start);
-    while !q.is_empty() {
-        if let Some(t) = q.pop_front() {
-            if let Some(children) = adj_list.get(&t) {
-                for c in children.iter(){
-                    if !visted.contains(c) {
-                        let d = depth_map.get(&t).unwrap() + 1;
-                        depth_map.insert(*c, d);
-                        q.push_back(*c);
-                        visted.insert(*c);
-                    }
-                }
-            }
-        }
-    }
-
-    let mut nodes_by_depth: HashMap<usize,Vec<usize>> = HashMap::new();
-
-    for e in depth_map.iter() {
-        nodes_by_depth.entry(*e.1).or_insert_with(Vec::new).push(*e.0); 
-    }
-
-    println!("hhh -> {:?} ", depth_map);
-    println!("hhh -> {:?} ", nodes_by_depth);
-}
 
 fn process_input_block(block: &str) -> usize {
     let grid = block
@@ -69,50 +17,65 @@ fn process_input_block(block: &str) -> usize {
         return 0;
     }
 
-    util::print_2d_vec_with_indexes(&grid);
-    let mut adj_list:HashMap<usize, HashSet<usize>> = HashMap::new();
+    //util::print_2d_vec_with_indexes(&grid);
+    let mut adj_list: HashMap<usize, HashSet<usize>> = HashMap::new();
 
     let grid_height = grid.len();
     let grid_width = if grid_height > 0 { grid[0].len() } else { 0 };
 
-    let _visited: HashSet<usize> = HashSet::new();
-    
-    let compute_idx = 
-        |x:i32, y:i32, grid: &Vec<Vec<char>>| {
+    let is_valid = |x: isize, y: isize| {
+        if x < 0 || y < 0 || x as usize >= grid_height || y as usize >= grid_width {
+            return None;
+        }
 
-            if x < 0 || y < 0 || x as usize >= grid_height || y as usize >= grid_width {
-                return Err("Out of range");
-            }
-            if grid[x as usize][y as usize] == '#'{
-                return Err("Cannot go there");
-            }
+        if grid[x as usize][y as usize] == '#' {
+            return None;
+        }
 
-            Ok(x as usize * grid_width + y as usize)
-        };
+        Some((x as usize, y as usize))
+    };
 
-    let mut start = usize::MAX;
-    for (i, row) in grid.iter().enumerate() {
-        for (j, e) in row.iter().enumerate() {
-            let idx = i as usize * grid_width + j as usize;
-            if start == usize::MAX && e == &'S' { start = idx; }
-            if let Ok(n_idx) = compute_idx(i as i32 - 1, j as i32, &grid) {
-                adj_list.entry(idx).or_insert_with(HashSet::new).insert(n_idx);
-            }
-            if let Ok(n_idx) = compute_idx(i as i32, j as i32 + 1, &grid) {
-                adj_list.entry(idx).or_insert_with(HashSet::new).insert(n_idx);
-            }
-            if let Ok(n_idx) = compute_idx(i as i32 + 1, j as i32, &grid) {
-                adj_list.entry(idx).or_insert_with(HashSet::new).insert(n_idx);
-            }
-            if let Ok(n_idx) = compute_idx(i as i32, j as i32 - 1, &grid) {
-                adj_list.entry(idx).or_insert_with(HashSet::new).insert(n_idx);
+    let start = grid
+        .iter()
+        .enumerate()
+        .find_map(|(i, row)| {
+            row.iter()
+                .enumerate()
+                .find(|(_, c)| *c == &'S')
+                .map(|(j, _)| (i, j))
+        })
+        .unwrap();
+
+    //println!("start {:?}", start);
+
+    let mut q: VecDeque<(usize, usize, usize)> = VecDeque::new();
+    let mut visited: HashSet<(usize, usize)> = HashSet::new();
+    let mut sol: HashSet<(usize, usize)> = HashSet::new();
+
+    q.push_back((start.0, start.1, 64));
+    visited.insert(start);
+    while let Some((r, c, d)) = q.pop_front() {
+        let (x, y) = (r as isize, c as isize);
+        if d % 2 == 0 { // hacky for now
+            sol.insert((r, c));
+        }
+        if d == 0 {
+            continue;
+        }
+        for (nx, ny) in [(x - 1, y), (x, y - 1), (x + 1, y), (x, y + 1)] {
+            if let Some((nr, nc)) = is_valid(nx, ny) {
+                if visited.contains(&(nr, nc)) {
+                    continue;
+                }
+                visited.insert((nr, nc));
+                q.push_back((nr, nc, d - 1))
             }
         }
     }
-    println!("Adjecent List {:?}", adj_list);
-    println!("start {:?}", start);
-    bfs(start, 7, &adj_list);
-    0
+
+    //println!("Solution {:?}", sol);
+
+    sol.len()
 }
 
 fn process_input_lines(haystack: &str) -> usize {
