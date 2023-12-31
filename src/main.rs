@@ -18,6 +18,7 @@ mod day15;
 mod day16;
 mod day18;
 mod day19;
+mod day20;
 mod day21;
 mod day23;
 mod day24;
@@ -47,10 +48,11 @@ fn main() {
         day15::play();
         day16::play();
         day18::play();
+        day20::play();
         day21::play();
     }
 
-    day21::play();
+    day20::play();
 }
 
     
